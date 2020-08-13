@@ -1,6 +1,7 @@
 import cv2 as cv
 import argparse
 import numpy as np
+from matplotlib import pyplot as plt
 
 parser = argparse.ArgumentParser(
         description='This sample shows how to define custom OpenCV deep learning layers in Python. '
@@ -46,7 +47,8 @@ net = cv.dnn.readNet(args.prototxt, args.caffemodel)
 
 ## Create a display window
 kWinName = 'Holistically-Nested_Edge_Detection'
-cv.namedWindow(kWinName, cv.WINDOW_AUTOSIZE)
+cv.namedWindow(kWinName)
+#cv.namedWindow(kWinName, cv.WINDOW_AUTOSIZE)
 
 cap = cv.VideoCapture(args.input if args.input else 0)
 
@@ -70,11 +72,13 @@ while cv.waitKey(1) < 0:
     out = net.forward()
     out = out[0, 0]
     out = cv.resize(out, (frame.shape[1], frame.shape[0]))
-    out = 255 * out
+    out = 100 * out
     out = out.astype(np.uint8)
     out=cv.cvtColor(out,cv.COLOR_GRAY2BGR)
     con=np.concatenate((frame,out),axis=1)
+    con= cv.resize(con, (1060, 520))
+    # print([i for i in dir(cv) if i.startswith('COLOR_')])
     if args.write_video:
         writer.write(np.uint8(con))
     cv.imshow(kWinName,con)
-    
+    cv.imwrite('./abc.jpg',con)
